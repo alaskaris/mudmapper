@@ -19,7 +19,10 @@ namespace mudmapper.Utils
             if (!File.Exists(file))
                 throw new ArgumentException("file cannot be found");
 
+            string chunkFile = $"{Path.GetFileNameWithoutExtension(file)}_{Path.GetRandomFileName()}.chnk";
+
             using (StreamReader filestream = new StreamReader(file))
+            using (StreamWriter chunkStream = new StreamWriter(chunkFile))
             {
                 string currentLine = null;
                 //Room currentRoom = null;
@@ -29,33 +32,24 @@ namespace mudmapper.Utils
 
                 while ((currentLine = filestream.ReadLine()) != null)
                 {
+                    Debug.WriteLine($"line--> {currentLine}");
+                    chunk += "|" + currentLine;
                     if (currentLine.Contains("Exits:"))
                     {
-                        chunk += currentLine;
-                        addToChunk = true;
+                        Debug.WriteLine($"chnk--> {chunk}");
+                        chunkStream.WriteLine(chunk);
+                        chunk = String.Empty;
                     }
-
-                    if (currentLine == "\n")
-                    {
-                        addToChunk = false;
-                        process(chunk);
-                    }
-
-                    if (addToChunk)
-                        chunk += currentLine;
-
                 }
             }
-
-
         }
 
         private void process(string chunk)
         {
             Debug.WriteLine($"chunk is--> {chunk}");
             var input = String.Empty;
-            Regex soloPattern = new Regex(@"Exits:[NESWUD]+>.\w*\r\n.*");
-            Regex groupPattern = new Regex(@"Exits:[NESWUD]+>\s\w*\r\n.*\r\nYou follow \w* (south|north|east|west|up|down).\r\n.*\r\n");
+            Regex soloPattern = new Regex(@"Exits:[NESWUD]+>.\w*|.*");
+            Regex groupPattern = new Regex(@"Exits:[NESWUD]+>\s\w*|.*\r\nYou follow \w* (south|north|east|west|up|down).|.*");
 
             if (soloPattern.IsMatch(chunk))
             {
