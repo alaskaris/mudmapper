@@ -7,12 +7,11 @@ namespace mudmapper
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
-
             Parser p = new Parser();
-            p.file = @"D:\Users\alask\OneDrive\Games\mud\mud logs\1.txt";
-            p.parse();
-
+            //p.file = @"C:\Users\alask\OneDrive\Games\mud\mud logs\1.txt";
+            //p.parse();
+            p.chunkFile = @"1_gyskbgqh.jes.chnk";
+            p.process();
         }
     }
 }
